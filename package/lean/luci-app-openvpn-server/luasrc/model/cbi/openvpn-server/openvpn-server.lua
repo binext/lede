@@ -61,6 +61,38 @@ o.write = function(self, section, value)
 end
 
 
+s:tab("log",  translate("日志"))
+local a="/tmp/openvpn.log"
+olog=s:taboption("log",TextValue,"sylogtext")
+olog.rows=20
+olog.readonly="readonly"
+olog.wrap="off"
+function olog.cfgvalue(self, section)
+  sylogtext=""
+  if a and nixio.fs.access(a)then
+    sylogtext=luci.sys.exec("tail -n 100 %s"%a)
+  end		   
+  return sylogtext
+end
+olog.write=function(self, section, value)  
+
+s:tab("status",  translate("连接状态"))
+local a="/tmp/log/openvpn_status.log"
+olog=s:taboption("status",TextValue,"sylogtext")
+olog.rows=20
+olog.readonly="readonly"
+olog.wrap="off"
+function olog.cfgvalue(self, section)
+  sylogtext=""
+  if a and nixio.fs.access(a)then
+    sylogtext=luci.sys.exec("tail -n 100 %s"%a)
+  end
+  return sylogtext
+end
+olog.write=function(self, section, value)					  									 
+
+
+
 local pid = luci.util.exec("/usr/bin/pgrep openvpn")
 
 function openvpn_process_status()
